@@ -17,9 +17,140 @@
     <div id="qunit-fixture">test markup, will be hidden</div>
 </body>
 <script>
-// test("test removeAccents without parameters", function() {
-//     equals( "Joao foi para o Japao", $.removeAccents("João foi para o Japão"), "João foi para o Japão");
-//     equals( "Pele", $.removeAccents("Pelé"), "Pelé");
-// });
+
+var myUrl = null;
+
+test("test getSource()", function(){
+    myUrl = $.urlParser("http://www.jairhenrique.com");
+    equals("http://www.jairhenrique.com", myUrl.getSource());
+
+    myUrl = $.urlParser("http://www.jairhenrique.com/dir/index.php?a=10");
+    equals("http://www.jairhenrique.com/dir/index.php?a=10", myUrl.getSource());
+});
+
+test("test getProtocol()", function(){
+    myUrl = $.urlParser("http://www.jairhenrique.com");
+    equals("http", myUrl.getProtocol());
+
+    myUrl = $.urlParser("ftp://www.jairhenrique.com");
+    equals("ftp", myUrl.getProtocol());
+});
+
+test("test getAuthority()", function(){
+    myUrl = $.urlParser("http://www.jairhenrique.com/dir/");
+    equals("www.jairhenrique.com", myUrl.getAuthority());
+
+    myUrl = $.urlParser("ftp://www.jairhenrique.com/dir/");
+    equals("www.jairhenrique.com", myUrl.getAuthority());
+})
+
+test("test getUserInfo()", function(){
+    myUrl = $.urlParser("http://www.jairhenrique.com/dir/");
+    equals(false, myUrl.getUserInfo());
+
+    myUrl = $.urlParser("http://user:password@www.jairhenrique.com/dir/");
+    equals("user:password", myUrl.getUserInfo());
+});
+
+test("test getUser()", function(){
+    myUrl = $.urlParser("http://www.jairhenrique.com/dir/");
+    equals(false, myUrl.getUser());
+
+    myUrl = $.urlParser("http://user:password@www.jairhenrique.com/dir/");
+    equals("user", myUrl.getUser());
+});
+
+test("test getPassword()", function(){
+    myUrl = $.urlParser("http://www.jairhenrique.com/dir/");
+    equals(false, myUrl.getPassword());
+
+    myUrl = $.urlParser("http://user:password@www.jairhenrique.com/dir/");
+    equals("password", myUrl.getPassword());
+});
+
+test("test getHost()", function(){
+    myUrl = $.urlParser("http://www.jairhenrique.com/dir/");
+    equals("www.jairhenrique.com", myUrl.getHost());
+
+    myUrl = $.urlParser("http://user:password@www.jairhenrique.com/dir/");
+    equals("www.jairhenrique.com", myUrl.getHost());
+});
+
+test("test getPort()", function(){
+    myUrl = $.urlParser("http://www.jairhenrique.com/dir/");
+    equals(false, myUrl.getPort());
+
+    myUrl = $.urlParser("http://user:password@www.jairhenrique.com:8088/dir/");
+    equals("8088", myUrl.getPort());
+});
+
+test("test getRelative()", function(){
+    myUrl = $.urlParser("http://www.jairhenrique.com/dir/test/index.php?x=10");
+    equals("/dir/test/index.php?x=10", myUrl.getRelative());
+
+    myUrl = $.urlParser("http://user:password@www.jairhenrique.com:8088/dir/");
+    equals("/dir/", myUrl.getRelative());
+});
+
+test("test getPath()", function(){
+    myUrl = $.urlParser("http://www.jairhenrique.com/dir/test/dir/test/index.php?x=10");
+    equals("/dir/test/dir/test/index.php", myUrl.getPath());
+
+    myUrl = $.urlParser("http://user:password@www.jairhenrique.com:8088/dir/");
+    equals("/dir/", myUrl.getPath());
+});
+
+test("test getDirectory()", function(){
+    myUrl = $.urlParser("http://www.jairhenrique.com/dir/test/dir/test/index.php?x=10");
+    equals("/dir/test/dir/test/", myUrl.getDirectory());
+
+    myUrl = $.urlParser("http://user:password@www.jairhenrique.com:8088/dir/");
+    equals("/dir/", myUrl.getDirectory());
+});
+
+test("test getFile()", function(){
+    myUrl = $.urlParser("http://www.jairhenrique.com/dir/test/dir/test/index.php?x=10");
+    equals("index.php", myUrl.getFile());
+
+    myUrl = $.urlParser("http://user:password@www.jairhenrique.com:8088/dir/connect.php");
+    equals("connect.php", myUrl.getFile());
+});
+
+test("test getQuery()", function(){
+    myUrl = $.urlParser("http://www.jairhenrique.com/?x=10&y=20");
+    equals("x=10&y=20", myUrl.getQuery());
+
+    myUrl = $.urlParser("http://user:password@www.jairhenrique.com:8088/dir/connect.php?user=foo&password=bar");
+    equals("user=foo&password=bar", myUrl.getQuery());
+});
+
+test("test getAnchor()", function(){
+    myUrl = $.urlParser("http://www.jairhenrique.com/#anchor");
+    equals("anchor", myUrl.getAnchor());
+});
+
+test("test getQueryParam()", function(){
+    myUrl = $.urlParser("http://www.jairhenrique.com/?a=10&b=20&c=30");
+    equals("10", myUrl.getQueryParam('a'));
+    equals("20", myUrl.getQueryParam('b'));
+    equals("30", myUrl.getQueryParam('c'));
+});
+
+test("test getQueryIndex()", function(){
+    myUrl = $.urlParser("http://www.jairhenrique.com/?a=10&b=20&c=30");
+    
+    obj = { 'key': 'a' ,'value': '10' };
+    equals( obj.key , myUrl.getQueryIndex(0).key );
+    equals( obj.value , myUrl.getQueryIndex(0).value );
+    
+    obj = { 'key': 'b' ,'value': '20' };
+    equals( obj.key , myUrl.getQueryIndex(1).key );
+    equals( obj.value , myUrl.getQueryIndex(1).value );
+
+    obj = { 'key': 'c' ,'value': '30' };
+    equals( obj.key , myUrl.getQueryIndex(2).key );
+    equals( obj.value , myUrl.getQueryIndex(2).value );
+});
+
 </script>
 </html>
